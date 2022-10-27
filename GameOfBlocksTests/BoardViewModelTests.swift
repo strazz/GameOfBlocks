@@ -108,4 +108,11 @@ final class BoardViewModelTests: XCTestCase {
         let testViewModel2 = BoardViewModel(rows: 5, columns: 5, maxBlocks: 10)
         XCTAssertEqual(testViewModel2.maxBlocks, 10)
     }
+    
+    // tests if updating a position on empty board moves the block on the bottom
+    func testUpdateBlockPositionOnEmptyBoard() throws {
+        try viewModel.addBlock(position: CGPoint(x: 0, y: 0))
+        let result = try viewModel.updateBlockPosition(startingPosition: CGPoint(x: 0, y: 0))
+        XCTAssertEqual(result, CGPoint(x: 0, y: 4))
+    }
 }

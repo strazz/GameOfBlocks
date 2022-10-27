@@ -57,7 +57,8 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
             let blockPosition = CGPoint(
                 x: (blockModel.position.x * size) + origin.x + size/2,
                 y: (blockModel.position.y * size) + origin.y + size/2)
-            BlockView()
+            let viewModel = BlockViewModel(blockModel: blockModel, boardViewModel: self.viewModel)
+            BlockView(viewModel: viewModel)
                 .frame(width: size, height: size)
                 .position(blockPosition)
         }

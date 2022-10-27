@@ -19,6 +19,7 @@ protocol BoardViewModelProtocol: ObservableObject {
     var columns: Int { get }
     var maxBlocks: Int { get }
     func addBlock(position: CGPoint) throws
+    func updateBlockPosition(startingPosition: CGPoint) throws -> CGPoint
     var currentBlocks: [BlockModel] { get }
 }
 
@@ -41,6 +42,15 @@ class BoardViewModel: ObservableObject, BoardViewModelProtocol {
         currentBlocks = []
     }
     
+    private func checkIndexes(row: Int, column: Int) throws {
+        guard column >= 0, column < columns else {
+            throw InvalidArgumentError.columnOutOfBounds(column: column)
+        }
+        guard row >= 0, row < rows else {
+            throw InvalidArgumentError.rowOutOfBounds(row: row)
+        }
+    }
+    
     func addBlock(position: CGPoint) throws {
         let count = currentBlocks.count
         guard count < maxBlocks else {
@@ -51,17 +61,26 @@ class BoardViewModel: ObservableObject, BoardViewModelProtocol {
         }
         let column = Int(position.x)
         let row = Int(position.y)
-        guard column >= 0, column < columns else {
-            throw InvalidArgumentError.columnOutOfBounds(column: column)
-        }
-        guard row >= 0, row < rows else {
-            throw InvalidArgumentError.rowOutOfBounds(row: row)
-        }
+        try checkIndexes(row: row, column: column)
         guard blocks[column][row] == nil else {
             throw InvalidArgumentError.cellIsFull(position: position)
         }
         let block = BlockModel(id: count, position: position, points: 0)
         blocks[column][row] = block
         currentBlocks = blocks.flatMap({ $0 }).compactMap({ $0 })
+    }
+    
+    @discardableResult
+    func updateBlockPosition(startingPosition: CGPoint) throws -> CGPoint {
+        let column = Int(startingPosition.x)
+        let row = Int(startingPosition.y)
+        try checkIndexes(row: row, column: column)
+        let currentBlockId = blocks[column][row]?.id
+        blocks[column][row] = nil
+        let newPosition = CGPoint(x: startingPosition.x, y: startingPosition.y + 1)
+        let block = BlockModel(id: currentBlockId ?? 0, position: newPosition, points: 0)
+        blocks[column][row] = block
+        currentBlocks = blocks.flatMap({ $0 }).compactMap({ $0 })
+        return newPosition
     }
 }
