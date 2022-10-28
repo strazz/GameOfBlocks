@@ -18,13 +18,8 @@ extension BlockPosition: Equatable {
     }
 }
 
-struct BlockModel: Hashable, Identifiable {
+struct BlockModel: Identifiable {
     var id: Int
     var position: BlockPosition
     var points: Int
-        
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(position.row)
-        hasher.combine(position.column)
-    }
 }

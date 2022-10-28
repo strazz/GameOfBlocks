@@ -16,6 +16,7 @@ enum StopPosition {
 
 protocol BoardGameBusinessLogicProtocol {
     func nextPosition(for block: BlockModel, blockMatrix: [[BlockModel?]]) -> BlockPosition
+    func calculatePoints(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int
 }
 
 class BoardGameBusinessLogic {
@@ -41,7 +42,7 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     
     private func isFinalPosition(position: BlockPosition, blockMatrix: [[BlockModel?]]) -> StopPosition {
         do {
-            try checkIndexes(row: position.row, column: position.column, blockMatrix: blockMatrix)
+            try checkRow(row: position.row, blockMatrix: blockMatrix)
         } catch {
             return .bottom
         }
@@ -60,12 +61,38 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
         return (blockMatrix[position.row][position.column - 1] != nil) && (blockMatrix[position.row][position.column + 1] != nil)
     }
     
-    private func checkIndexes(row: Int, column: Int, blockMatrix: [[BlockModel?]]) throws {
-        guard column >= 0, column < blockMatrix[0].count else {
-            throw InvalidArgumentError.columnOutOfBounds(column: column)
-        }
+    private func checkRow(row: Int, blockMatrix: [[BlockModel?]]) throws {
         guard row >= 0, row < blockMatrix.count else {
             throw InvalidArgumentError.rowOutOfBounds(row: row)
         }
+    }
+    
+    func calculatePoints(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
+        if blockMatrix[position.row][position.column] == nil {
+            if isUnderBridge(position: position, blockMatrix: blockMatrix) {
+                return 10
+            }
+            return 0
+        }
+        var result: Int = 5
+        let row = position.row + 1
+        if row < blockMatrix.count && blockMatrix[row][position.column] != nil {
+            result += calculatePoints(for: BlockPosition(row: row, column: position.column), blockMatrix: blockMatrix)
+        }
+        return result
+    }
+    
+    private func isUnderBridge(position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Bool {
+        var result = false
+        let row = position.row - 1
+        guard row >= 0 else {
+            return result
+        }
+        if blockMatrix[row][position.column] != nil {
+            result = true
+        } else {
+            result = isUnderBridge(position: BlockPosition(row: row, column: position.column), blockMatrix: blockMatrix)
+        }
+        return result
     }
 }

@@ -11,12 +11,15 @@ import XCTest
 final class BoardViewModelTests: XCTestCase {
     
     private var viewModel: BoardViewModel!
+    private var businessLogic: MockBoardGameBusinessLogic!
     
     override func setUpWithError() throws {
-        viewModel = BoardViewModel(rows: 5, columns: 5, maxBlocks: 10, gameLogic: BoardGameBusinessLogic())
+        businessLogic = MockBoardGameBusinessLogic()
+        viewModel = BoardViewModel(rows: 5, columns: 5, maxBlocks: 10, gameLogic: businessLogic)
     }
     
     override func tearDownWithError() throws {
+        businessLogic = nil
         viewModel = nil
     }
     
@@ -27,9 +30,9 @@ final class BoardViewModelTests: XCTestCase {
     
     // tests maxBlocks variable init
     func testMaxBlocks() throws {
-        let testViewModel = BoardViewModel(rows: 1, columns: 1, maxBlocks: 10, gameLogic: BoardGameBusinessLogic())
+        let testViewModel = BoardViewModel(rows: 1, columns: 1, maxBlocks: 10, gameLogic: MockBoardGameBusinessLogic())
         XCTAssertEqual(testViewModel.maxBlocks, 1)
-        let testViewModel2 = BoardViewModel(rows: 5, columns: 5, maxBlocks: 10, gameLogic: BoardGameBusinessLogic())
+        let testViewModel2 = BoardViewModel(rows: 5, columns: 5, maxBlocks: 10, gameLogic: MockBoardGameBusinessLogic())
         XCTAssertEqual(testViewModel2.maxBlocks, 10)
     }
     
@@ -68,6 +71,7 @@ final class BoardViewModelTests: XCTestCase {
         try viewModel.addBlock(position: BlockPosition(row: 1, column: 4))
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 2, column: 0))) { error in
             XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.maxBlocksReached(maxBlocks: 10))
+            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.maxBlocksReached(maxBlocks: 10).localizedDescription)
         }
         let result = viewModel.blocks
         XCTAssertEqual(result.flatMap({ $0 }).compactMap({ $0 }).count, viewModel.maxBlocks)
@@ -79,6 +83,7 @@ final class BoardViewModelTests: XCTestCase {
         viewModel.currentStatus = .done
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))) { error in
             XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.invalidStatus(status: .done))
+            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.invalidStatus(status: .done).localizedDescription)
         }
     }
     
@@ -87,6 +92,7 @@ final class BoardViewModelTests: XCTestCase {
         try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))) { error in
             XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.cellIsFull(position: BlockPosition(row: 0, column: 0)))
+            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.cellIsFull(position: BlockPosition(row: 0, column: 0)).localizedDescription)
         }
         let result = viewModel.blocks
         XCTAssertEqual(viewModel.blockCount, 1)
@@ -98,9 +104,11 @@ final class BoardViewModelTests: XCTestCase {
     func testInvalidIndexes() throws {
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: -1, column: 0))) { error in
             XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.rowOutOfBounds(row: -1))
+            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.rowOutOfBounds(row: -1).localizedDescription)
         }
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 0, column: -1))) { error in
             XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.columnOutOfBounds(column: -1))
+            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.columnOutOfBounds(column: -1).localizedDescription)
         }
         let result = viewModel.blocks
         XCTAssertEqual(result.flatMap({ $0 }).compactMap({ $0 }).count, 0)
@@ -108,53 +116,27 @@ final class BoardViewModelTests: XCTestCase {
     }
     
     // out of bounds indexes are not valid
-    func testOutOfBoubndsIndexes() throws {
+    func testOutOfBoundsIndexes() throws {
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 5, column: 0))) { error in
             XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.rowOutOfBounds(row: 5))
+            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.rowOutOfBounds(row: 5).localizedDescription)
         }
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 0, column: 6))) { error in
             XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.columnOutOfBounds(column: 6))
+            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.columnOutOfBounds(column: 6).localizedDescription)
         }
         let result = viewModel.blocks
         XCTAssertEqual(result.flatMap({ $0 }).compactMap({ $0 }).count, 0)
         XCTAssertEqual(viewModel.blockCount, 0)
     }
     
-    // tests if updating a position on empty board moves the block on the bottom
-    func testUpdateBlockPositionOnEmptyBoard() throws {
+    // tests that updateBlockPosition returns business logic result and updates matrix
+    func testUpdateBlockPosition() throws {
         let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
+        businessLogic.mockPosition = BlockPosition(row: 4, column: 0)
         try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))
         let result = try viewModel.updateBlockPosition(block: block)
-        XCTAssertEqual(result, BlockPosition(row: 4, column: 0))
+        XCTAssertEqual(result, businessLogic.mockPosition)
         XCTAssertEqual(viewModel.blocks[4][0]?.position, result)
-    }
-    
-    // tests if updating a position on a board with some blocks stops the block on another one
-    func testUpdateBlockPositionOverBlock() throws {
-        let bottomBlock = BlockModel(id: 0, position: BlockPosition(row: 4, column: 0), points: 0)
-        try viewModel.addBlock(position: bottomBlock.position)
-        let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
-        try viewModel.addBlock(position: block.position)
-        let result = try viewModel.updateBlockPosition(block: block)
-        XCTAssertEqual(result, BlockPosition(row: 3, column: 0))
-        XCTAssertEqual(viewModel.blocks[3][0]?.position, result)
-        XCTAssertEqual(viewModel.blocks[4][0]?.position, bottomBlock.position)
-    }
-    
-    // tests if updating a position on a board with some blocks stops the block in bridge position
-    func testUpdateBlockPositionOverBridge() throws {
-        let block1 = BlockModel(id: 0, position: BlockPosition(row: 3, column: 0), points: 0)
-        let block2 = BlockModel(id: 1, position: BlockPosition(row: 4, column: 0), points: 0)
-        let block3 = BlockModel(id: 2, position: BlockPosition(row: 3, column: 2), points: 0)
-        let block4 = BlockModel(id: 3, position: BlockPosition(row: 4, column: 2), points: 0)
-        let newBlock = BlockModel(id: 3, position: BlockPosition(row: 0, column: 1), points: 0)
-        try viewModel.addBlock(position: block1.position)
-        try viewModel.addBlock(position: block2.position)
-        try viewModel.addBlock(position: block3.position)
-        try viewModel.addBlock(position: block4.position)
-        try viewModel.addBlock(position: newBlock.position)
-        let result = try viewModel.updateBlockPosition(block: newBlock)
-        XCTAssertEqual(result, BlockPosition(row: 3, column: 1))
-        XCTAssertEqual(viewModel.blocks[3][1]?.position, result)
     }
 }

@@ -19,8 +19,10 @@ class MockBoardViewModel: BoardViewModelProtocol {
     
     func addBlock(position: BlockPosition) throws { }
     
+    var isUpdateBlockPositionCalled = false
     func updateBlockPosition(block: GameOfBlocks.BlockModel) throws -> BlockPosition {
-        BlockPosition(row: 0, column: 0)
+        isUpdateBlockPositionCalled = true
+        return BlockPosition(row: 0, column: 0)
     }
 }
 
@@ -28,12 +30,19 @@ class MockBlockViewModel: BlockViewModelProtocol {
     var id: Int = 0
     var boardViewModel: (any BoardViewModelProtocol)?
     var blockModel: BlockModel = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
-    func moveBlock() throws { }
+    func moveBlock() throws {
+        try boardViewModel?.updateBlockPosition(block: blockModel)
+    }
 }
 
 class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
-    var mockValue = BlockPosition(row: 0, column: 0)
+    var mockPosition = BlockPosition(row: 0, column: 0)
     func nextPosition(for block: BlockModel, blockMatrix: [[BlockModel?]]) -> BlockPosition {
-        mockValue
+        mockPosition
+    }
+    
+    var mockPoints: Int = 0
+    func calculatePoints(for position: GameOfBlocks.BlockPosition, blockMatrix: [[GameOfBlocks.BlockModel?]]) -> Int {
+        mockPoints
     }
 }

@@ -21,6 +21,8 @@
 		1F018D5029089AA20039B56D /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F018D4F29089AA20039B56D /* Errors.swift */; };
 		1F5922BF290B3847008E4AA4 /* BoardGameBusinessLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5922BE290B3847008E4AA4 /* BoardGameBusinessLogic.swift */; };
 		1F5922C1290B3AC0008E4AA4 /* TestMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5922C0290B3AC0008E4AA4 /* TestMocks.swift */; };
+		1F5922C7290C71D5008E4AA4 /* BoardGameBusinessLogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5922C6290C71D5008E4AA4 /* BoardGameBusinessLogicTests.swift */; };
+		1F5922C9290C8440008E4AA4 /* BlockViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5922C8290C8440008E4AA4 /* BlockViewModelTests.swift */; };
 		1F5EBF6D2909E6FD00A135F2 /* BoardCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5EBF6C2909E6FD00A135F2 /* BoardCellView.swift */; };
 		1F5EBF6F2909F67300A135F2 /* BlockViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5EBF6E2909F67300A135F2 /* BlockViewModel.swift */; };
 /* End PBXBuildFile section */
@@ -60,6 +62,8 @@
 		1F018D4F29089AA20039B56D /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		1F5922BE290B3847008E4AA4 /* BoardGameBusinessLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardGameBusinessLogic.swift; sourceTree = "<group>"; };
 		1F5922C0290B3AC0008E4AA4 /* TestMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMocks.swift; sourceTree = "<group>"; };
+		1F5922C6290C71D5008E4AA4 /* BoardGameBusinessLogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardGameBusinessLogicTests.swift; sourceTree = "<group>"; };
+		1F5922C8290C8440008E4AA4 /* BlockViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockViewModelTests.swift; sourceTree = "<group>"; };
 		1F5EBF6C2909E6FD00A135F2 /* BoardCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCellView.swift; sourceTree = "<group>"; };
 		1F5EBF6E2909F67300A135F2 /* BlockViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -138,6 +142,8 @@
 			children = (
 				1F5922C0290B3AC0008E4AA4 /* TestMocks.swift */,
 				1F018D2A29088EBF0039B56D /* BoardViewModelTests.swift */,
+				1F5922C8290C8440008E4AA4 /* BlockViewModelTests.swift */,
+				1F5922C6290C71D5008E4AA4 /* BoardGameBusinessLogicTests.swift */,
 			);
 			path = GameOfBlocksTests;
 			sourceTree = "<group>";
@@ -341,7 +347,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F5922C7290C71D5008E4AA4 /* BoardGameBusinessLogicTests.swift in Sources */,
 				1F018D2B29088EBF0039B56D /* BoardViewModelTests.swift in Sources */,
+				1F5922C9290C8440008E4AA4 /* BlockViewModelTests.swift in Sources */,
 				1F5922C1290B3AC0008E4AA4 /* TestMocks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -30,9 +30,9 @@ class BoardViewModel: ObservableObject, BoardViewModelProtocol {
     let columns: Int
     let maxBlocks: Int
     let gameLogic: BoardGameBusinessLogicProtocol
-    var currentStatus: BoardStatus
     var blocks: [[BlockModel?]]
-    @Published var blockCount: Int
+    var blockCount: Int
+    @Published var currentStatus: BoardStatus
     @Published var currentBlocks: [BlockModel]
     
     init(rows: Int, columns: Int, maxBlocks: Int, gameLogic: BoardGameBusinessLogicProtocol) {
@@ -56,7 +56,6 @@ class BoardViewModel: ObservableObject, BoardViewModelProtocol {
     }
     
     func addBlock(position: BlockPosition) throws {
-        print("add block to row \(position.row) column \(position.column)")
         guard blockCount < maxBlocks else {
             throw InvalidArgumentError.maxBlocksReached(maxBlocks: maxBlocks)
         }
