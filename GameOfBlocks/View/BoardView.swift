@@ -17,8 +17,8 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
     
     var body: some View {
         GeometryReader { (geometry: GeometryProxy) in
-            let columns = viewModel.rows
-            let rows = viewModel.columns
+            let columns = viewModel.columns
+            let rows = viewModel.rows
             let bounds = geometry.size
             let squareSize = min((bounds.width/CGFloat(columns)), (bounds.height/CGFloat(rows)))
             let horizontalPadding = (bounds.width - squareSize * CGFloat(columns))/2
@@ -31,7 +31,7 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
                                 .frame(width: squareSize, height: squareSize)
                                 .onTapGesture {
                                     do {
-                                        try self.viewModel.addBlock(position: CGPoint(x: column, y: row))
+                                        try self.viewModel.addBlock(position: BlockPosition(row: row, column: column))
                                     }
                                     catch let error {
                                         print(error.localizedDescription)
@@ -53,14 +53,17 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
     
     
     func drawBlocks(size: CGFloat, origin: CGPoint) -> some View {
-        ForEach(viewModel.currentBlocks) { blockModel in
-            let blockPosition = CGPoint(
-                x: (blockModel.position.x * size) + origin.x + size/2,
-                y: (blockModel.position.y * size) + origin.y + size/2)
+        ForEach(viewModel.currentBlocks) { (blockModel: BlockModel) in
+            let row: CGFloat = CGFloat(blockModel.position.row)
+            let column: CGFloat = CGFloat(blockModel.position.column)
+            
+            let viewPosition = CGPoint(
+                x: (column * size) + origin.x + size * 0.5,
+                y: (row * size) + origin.y + size * 0.5)
             let viewModel = BlockViewModel(blockModel: blockModel, boardViewModel: self.viewModel)
             BlockView(viewModel: viewModel)
                 .frame(width: size, height: size)
-                .position(blockPosition)
+                .position(viewPosition)
         }
     }
     
@@ -68,7 +71,7 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
 
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = BoardViewModel(rows: 5, columns: 5, maxBlocks: 10)
+        let viewModel = BoardViewModel(rows: 5, columns: 5, maxBlocks: 10, gameLogic: BoardGameBusinessLogic())
         BoardView(viewModel: viewModel)
     }
 }

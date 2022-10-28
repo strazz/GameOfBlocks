@@ -9,7 +9,6 @@ import Foundation
 
 enum BoardStatus {
     case ready
-    case animating
     case done
 }
 
@@ -18,9 +17,11 @@ protocol BoardViewModelProtocol: ObservableObject {
     var rows: Int { get }
     var columns: Int { get }
     var maxBlocks: Int { get }
-    func addBlock(position: CGPoint) throws
-    func updateBlockPosition(startingPosition: CGPoint) throws -> CGPoint
     var currentBlocks: [BlockModel] { get }
+    func addBlock(position: BlockPosition) throws
+    @discardableResult func updateBlockPosition(block: BlockModel) throws -> BlockPosition
+    var blocks: [[BlockModel?]] { get }
+    var blockCount: Int { get }
 }
 
 class BoardViewModel: ObservableObject, BoardViewModelProtocol {
@@ -28,58 +29,60 @@ class BoardViewModel: ObservableObject, BoardViewModelProtocol {
     let rows: Int
     let columns: Int
     let maxBlocks: Int
-    private var blocks: [[BlockModel?]]
+    let gameLogic: BoardGameBusinessLogicProtocol
     var currentStatus: BoardStatus
-    
+    var blocks: [[BlockModel?]]
+    @Published var blockCount: Int
     @Published var currentBlocks: [BlockModel]
     
-    init(rows: Int, columns: Int, maxBlocks: Int) {
+    init(rows: Int, columns: Int, maxBlocks: Int, gameLogic: BoardGameBusinessLogicProtocol) {
         self.rows = rows
         self.columns = columns
+        self.gameLogic = gameLogic
         self.maxBlocks = min(rows * columns, maxBlocks)
-        blocks = Array(repeating: Array(repeating: nil, count: rows), count: columns)
+        blocks = Array(repeating: Array(repeating: nil, count: columns), count: rows)
         currentStatus = .ready
         currentBlocks = []
+        blockCount = 0
     }
     
     private func checkIndexes(row: Int, column: Int) throws {
-        guard column >= 0, column < columns else {
+        guard column >= 0, column < blocks[0].count else {
             throw InvalidArgumentError.columnOutOfBounds(column: column)
         }
-        guard row >= 0, row < rows else {
+        guard row >= 0, row < blocks.count else {
             throw InvalidArgumentError.rowOutOfBounds(row: row)
         }
     }
     
-    func addBlock(position: CGPoint) throws {
-        let count = currentBlocks.count
-        guard count < maxBlocks else {
+    func addBlock(position: BlockPosition) throws {
+        print("add block to row \(position.row) column \(position.column)")
+        guard blockCount < maxBlocks else {
             throw InvalidArgumentError.maxBlocksReached(maxBlocks: maxBlocks)
         }
         guard currentStatus == .ready else {
             throw InvalidArgumentError.invalidStatus(status: currentStatus)
         }
-        let column = Int(position.x)
-        let row = Int(position.y)
+        let column = position.column
+        let row = position.row
         try checkIndexes(row: row, column: column)
-        guard blocks[column][row] == nil else {
+        guard blocks[row][column] == nil else {
             throw InvalidArgumentError.cellIsFull(position: position)
         }
-        let block = BlockModel(id: count, position: position, points: 0)
-        blocks[column][row] = block
+        let block = BlockModel(id: blockCount + 1, position: position, points: 0)
+        blocks[row][column] = block
+        blockCount += 1
         currentBlocks = blocks.flatMap({ $0 }).compactMap({ $0 })
     }
     
-    @discardableResult
-    func updateBlockPosition(startingPosition: CGPoint) throws -> CGPoint {
-        let column = Int(startingPosition.x)
-        let row = Int(startingPosition.y)
+    @discardableResult func updateBlockPosition(block: BlockModel) throws -> BlockPosition {
+        let column = block.position.column
+        let row = block.position.row
         try checkIndexes(row: row, column: column)
-        let currentBlockId = blocks[column][row]?.id
-        blocks[column][row] = nil
-        let newPosition = CGPoint(x: startingPosition.x, y: startingPosition.y + 1)
-        let block = BlockModel(id: currentBlockId ?? 0, position: newPosition, points: 0)
-        blocks[column][row] = block
+        blocks[row][column] = nil
+        let newPosition = gameLogic.nextPosition(for: block, blockMatrix: blocks)
+        let newBlock = BlockModel(id: blockCount, position: newPosition, points: block.points)
+        blocks[newPosition.row][newPosition.column] = newBlock
         currentBlocks = blocks.flatMap({ $0 }).compactMap({ $0 })
         return newPosition
     }

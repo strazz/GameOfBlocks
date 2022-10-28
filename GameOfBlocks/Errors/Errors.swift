@@ -11,7 +11,7 @@ enum InvalidArgumentError: LocalizedError, Equatable {
     
     case columnOutOfBounds(column: Int)
     case rowOutOfBounds(row: Int)
-    case cellIsFull(position: CGPoint)
+    case cellIsFull(position: BlockPosition)
     case maxBlocksReached(maxBlocks: Int)
     case invalidStatus(status: BoardStatus)
     

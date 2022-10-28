@@ -7,27 +7,22 @@
 
 import Foundation
 
-protocol BlockViewModelProtocol: ObservableObject, Identifiable {
-    var id: Int { get }
+protocol BlockViewModelProtocol: ObservableObject {
     var boardViewModel: (any BoardViewModelProtocol)? { get }
     var blockModel: BlockModel { get }
-    func updateBlockPosition()
+    func moveBlock() throws
 }
 
 class BlockViewModel: BlockViewModelProtocol {
     weak var boardViewModel: (any BoardViewModelProtocol)?
     var blockModel: BlockModel
     
-    var id: Int {
-        blockModel.id
-    }
-    
     init(blockModel: BlockModel, boardViewModel: (any BoardViewModelProtocol)?) {
         self.blockModel = blockModel
         self.boardViewModel = boardViewModel
     }
     
-    func updateBlockPosition() {
-        try? boardViewModel?.updateBlockPosition(startingPosition: blockModel.position)
+    func moveBlock() throws {
+        try boardViewModel?.updateBlockPosition(block: blockModel)
     }
 }

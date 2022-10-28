@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct BlockView<ViewModel>: View where ViewModel: BlockViewModelProtocol {
+struct BlockView: View {
     
-    @ObservedObject var viewModel: ViewModel
+    var viewModel: any BlockViewModelProtocol
     
-    init(viewModel: ViewModel) {
+    init(viewModel: any BlockViewModelProtocol) {
         self.viewModel = viewModel
     }
     
@@ -20,7 +20,7 @@ struct BlockView<ViewModel>: View where ViewModel: BlockViewModelProtocol {
             .fill(Color.blue)
             .onAppear {
                 withAnimation {
-                    self.viewModel.updateBlockPosition()
+                    try? self.viewModel.moveBlock()
                 }
             }
     }
@@ -28,7 +28,12 @@ struct BlockView<ViewModel>: View where ViewModel: BlockViewModelProtocol {
 
 struct BlockView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = BlockViewModel(blockModel: BlockModel(id: 1, position: .zero, points: 0), boardViewModel: nil)
+        let viewModel = BlockViewModel(
+            blockModel: BlockModel(
+                id: 0,
+                position: BlockPosition(row: 0, column: 0),
+                points: 0),
+            boardViewModel: nil)
         BlockView(viewModel: viewModel)
     }
 }

@@ -10,7 +10,12 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            BoardView(viewModel: BoardViewModel(rows: 5, columns: 5, maxBlocks: 10))
+            BoardView(
+                viewModel: BoardViewModel(
+                    rows: 5,
+                    columns: 5,
+                    maxBlocks: 10,
+                    gameLogic: BoardGameBusinessLogic()))
         }
         .padding()
     }
