@@ -26,7 +26,7 @@ final class BoardGameBusinessLogicTests: XCTestCase {
     // tests if updating a position on empty board moves the block on the bottom
     func testNextPositionOnEmptyBoard() throws {
         let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
-        let result = businessLogic.nextPosition(for: block, blockMatrix: blockMatrix)
+        let result = businessLogic.nextPosition(for: block.position, blockMatrix: blockMatrix)
         blockMatrix[result.row][result.column] = BlockModel(id: 0, position: result, points: 0)
         XCTAssertEqual(result, BlockPosition(row: 4, column: 0))
         XCTAssertEqual(blockMatrix[4][0]?.position, result)
@@ -37,7 +37,7 @@ final class BoardGameBusinessLogicTests: XCTestCase {
         let bottomBlock = BlockModel(id: 0, position: BlockPosition(row: 4, column: 0), points: 0)
         blockMatrix[4][0] = bottomBlock
         let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
-        let result = businessLogic.nextPosition(for: block, blockMatrix: blockMatrix)
+        let result = businessLogic.nextPosition(for: block.position, blockMatrix: blockMatrix)
         blockMatrix[result.row][result.column] = BlockModel(id: 0, position: result, points: 0)
         XCTAssertEqual(result, BlockPosition(row: 3, column: 0))
         XCTAssertEqual(blockMatrix[3][0]?.position, result)
@@ -55,7 +55,7 @@ final class BoardGameBusinessLogicTests: XCTestCase {
         let block4 = BlockModel(id: 3, position: BlockPosition(row: 4, column: 2), points: 0)
         blockMatrix[4][2] = block4
         let newBlock = BlockModel(id: 3, position: BlockPosition(row: 0, column: 1), points: 0)
-        let result = businessLogic.nextPosition(for: newBlock, blockMatrix: blockMatrix)
+        let result = businessLogic.nextPosition(for: newBlock.position, blockMatrix: blockMatrix)
         blockMatrix[result.row][result.column] = BlockModel(id: 0, position: result, points: 0)
         XCTAssertEqual(result, BlockPosition(row: 3, column: 1))
         XCTAssertEqual(blockMatrix[3][1]?.position, result)
@@ -64,7 +64,7 @@ final class BoardGameBusinessLogicTests: XCTestCase {
     //test invalid column
     func testNextPositionInvalidRow() throws {
         let block = BlockModel(id: 0, position: BlockPosition(row: 5, column: 0), points: 0)
-        let result = businessLogic.nextPosition(for: block, blockMatrix: blockMatrix)
+        let result = businessLogic.nextPosition(for: block.position, blockMatrix: blockMatrix)
         XCTAssertEqual(result, BlockPosition(row: 4, column: 0))
     }
     

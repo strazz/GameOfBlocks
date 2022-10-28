@@ -37,7 +37,7 @@ class MockBlockViewModel: BlockViewModelProtocol {
 
 class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     var mockPosition = BlockPosition(row: 0, column: 0)
-    func nextPosition(for block: BlockModel, blockMatrix: [[BlockModel?]]) -> BlockPosition {
+    func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition {
         mockPosition
     }
     

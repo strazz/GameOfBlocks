@@ -15,7 +15,7 @@ enum StopPosition {
 }
 
 protocol BoardGameBusinessLogicProtocol {
-    func nextPosition(for block: BlockModel, blockMatrix: [[BlockModel?]]) -> BlockPosition
+    func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition
     func calculatePoints(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int
 }
 
@@ -25,18 +25,17 @@ class BoardGameBusinessLogic {
 
 extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     
-    func nextPosition(for block: BlockModel, blockMatrix: [[BlockModel?]]) -> BlockPosition {
-        var blockPosition = block.position
-        var stopPosition = isFinalPosition(position: blockPosition, blockMatrix: blockMatrix)
-        while stopPosition == .none {
-            blockPosition = BlockPosition(row: blockPosition.row + 1, column: blockPosition.column)
-            stopPosition = isFinalPosition(position: blockPosition, blockMatrix: blockMatrix)
+    func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition {
+        var stopPosition = isFinalPosition(position: position, blockMatrix: blockMatrix)
+        if stopPosition == .none {
+            let newPosition = BlockPosition(row: position.row + 1, column: position.column)
+            return nextPosition(for: newPosition, blockMatrix: blockMatrix)
         }
         switch stopPosition {
         case .bridge:
-            return BlockPosition(row: blockPosition.row, column: blockPosition.column)
+            return BlockPosition(row: position.row, column: position.column)
         default:
-            return BlockPosition(row: blockPosition.row - 1, column: blockPosition.column)
+            return BlockPosition(row: position.row - 1, column: position.column)
         }
     }
     

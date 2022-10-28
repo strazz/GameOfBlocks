@@ -79,7 +79,7 @@ class BoardViewModel: ObservableObject, BoardViewModelProtocol {
         let row = block.position.row
         try checkIndexes(row: row, column: column)
         blocks[row][column] = nil
-        let newPosition = gameLogic.nextPosition(for: block, blockMatrix: blocks)
+        let newPosition = gameLogic.nextPosition(for: block.position, blockMatrix: blocks)
         let newBlock = BlockModel(id: blockCount, position: newPosition, points: block.points)
         blocks[newPosition.row][newPosition.column] = newBlock
         currentBlocks = blocks.flatMap({ $0 }).compactMap({ $0 })
