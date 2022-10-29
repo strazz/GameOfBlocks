@@ -120,6 +120,6 @@ class BoardViewModel: BoardViewModelProtocol {
     }
     
     var score: Int {
-        gameLogic.score
+        gameLogic.calculateTotalScore(blockMatrix: blocks)
     }
 }

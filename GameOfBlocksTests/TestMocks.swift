@@ -71,6 +71,7 @@ class MockBlockViewModel: BlockViewModelProtocol {
 }
 
 class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
+    
     func reset() {
         mockPosition = BlockPosition(row: 0, column: 0)
         mockScore = 0
@@ -88,6 +89,9 @@ class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     }
     
     var mockScore: Int = 42
+    func calculateTotalScore(blockMatrix: [[BlockModel?]]) -> Int {
+        mockScore
+    }
 }
 
 extension MockBoardGameBusinessLogic: ScoreProtocol {
