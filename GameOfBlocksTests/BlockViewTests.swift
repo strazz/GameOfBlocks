@@ -17,7 +17,7 @@ final class BlockViewTests: XCTestCase {
 
     override func setUpWithError() throws {
         mockBoardViewModel = MockBoardViewModel()
-        view = MockViewFactory.buildBlockView(block: BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0), boardViewModel: mockBoardViewModel)
+        view = MockViewFactory.buildBlockView(block: BlockModel(id: 0, position: BlockPosition(row: 0, column: 0)), boardViewModel: mockBoardViewModel)
     }
 
     override func tearDownWithError() throws {

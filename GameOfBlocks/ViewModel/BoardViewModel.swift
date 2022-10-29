@@ -7,22 +7,6 @@
 
 import Foundation
 
-enum BoardStatus {
-    case ready
-    case animating
-    case done
-    case unknown
-}
-
-protocol StatusProtocol {
-    var currentStatus: BoardStatus { get }
-    func updateStatus(requestedStatus: BoardStatus?)
-}
-
-protocol Resettable {
-    func reset()
-}
-
 protocol BoardViewModelProtocol: ObservableObject, StatusProtocol, ScoreProtocol, Resettable {
     var rows: Int { get }
     var columns: Int { get }
@@ -90,7 +74,7 @@ class BoardViewModel: BoardViewModelProtocol {
         guard blocks[row][column] == nil else {
             throw InvalidArgumentError.cellIsFull(position: position)
         }
-        let block = BlockModel(id: blockCount + 1, position: position, points: 0)
+        let block = BlockModel(id: blockCount + 1, position: position)
         blocks[row][column] = block
         blockCount += 1
         currentBlocks = blocks.flatMap({ $0 }).compactMap({ $0 })
@@ -102,7 +86,7 @@ class BoardViewModel: BoardViewModelProtocol {
         try checkIndexes(row: row, column: column)
         blocks[row][column] = nil
         let newPosition = gameLogic.nextPosition(for: block.position, blockMatrix: blocks)
-        let newBlock = BlockModel(id: blockCount, position: newPosition, points: block.points)
+        let newBlock = BlockModel(id: blockCount, position: newPosition)
         blocks[newPosition.row][newPosition.column] = newBlock
         currentBlocks = blocks.flatMap({ $0 }).compactMap({ $0 })
         return newPosition

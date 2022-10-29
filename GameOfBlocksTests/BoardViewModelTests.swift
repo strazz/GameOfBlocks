@@ -155,7 +155,7 @@ final class BoardViewModelTests: XCTestCase {
     
     // tests that updateBlockPosition returns business logic result and updates matrix
     func testUpdateBlockPosition() throws {
-        let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
+        let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0))
         businessLogic.mockPosition = BlockPosition(row: 4, column: 0)
         try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))
         let result = try viewModel.updateBlockPosition(block: block)

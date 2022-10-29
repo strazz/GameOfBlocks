@@ -36,7 +36,7 @@ struct BlockView<ViewModel>: View where ViewModel: BlockViewModelProtocol {
 
 struct BlockView_Previews: PreviewProvider {
     static var previews: some View {
-        let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
+        let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0))
         ViewFactory.buildBlockView(block: block, boardViewModel: nil)
     }
 }

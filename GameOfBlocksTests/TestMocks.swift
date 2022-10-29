@@ -10,7 +10,7 @@ import Foundation
 
 class MockBoardViewModel: BoardViewModelProtocol {
     var currentBlocks: [BlockModel] = [
-        BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
+        BlockModel(id: 0, position: BlockPosition(row: 0, column: 0))
     ]
     var blocks: [[BlockModel?]] = [[]]
     var blockCount: Int = 0
@@ -52,7 +52,7 @@ class MockBlockViewModel: BlockViewModelProtocol {
     var currentStatus: BoardStatus = .ready
     var id: Int = 0
     var boardViewModel: (any BoardViewModelProtocol)?
-    var blockModel: BlockModel = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
+    var blockModel: BlockModel = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0))
     
     func moveBlock(animationDuration: Double, completion: @escaping () -> Void) throws {
         try boardViewModel?.updateBlockPosition(block: blockModel)

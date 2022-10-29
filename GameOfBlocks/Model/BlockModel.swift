@@ -21,5 +21,4 @@ extension BlockPosition: Equatable {
 struct BlockModel: Identifiable {
     var id: Int
     var position: BlockPosition
-    var points: Int
 }

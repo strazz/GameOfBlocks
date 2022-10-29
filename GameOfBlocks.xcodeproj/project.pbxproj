@@ -28,6 +28,7 @@
 		1F5922CF290DC8D4008E4AA4 /* BoardCellViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5922CE290DC8D4008E4AA4 /* BoardCellViewModelTests.swift */; };
 		1F5922D1290DCA3A008E4AA4 /* BoardViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5922D0290DCA3A008E4AA4 /* BoardViewTests.swift */; };
 		1F5922D3290DCD2C008E4AA4 /* BlockViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5922D2290DCD2C008E4AA4 /* BlockViewTests.swift */; };
+		1F5922D6290DCDC9008E4AA4 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5922D5290DCDC9008E4AA4 /* Protocols.swift */; };
 		1F5EBF6D2909E6FD00A135F2 /* BoardCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5EBF6C2909E6FD00A135F2 /* BoardCellView.swift */; };
 		1F5EBF6F2909F67300A135F2 /* BlockViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5EBF6E2909F67300A135F2 /* BlockViewModel.swift */; };
 /* End PBXBuildFile section */
@@ -74,6 +75,7 @@
 		1F5922CE290DC8D4008E4AA4 /* BoardCellViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCellViewModelTests.swift; sourceTree = "<group>"; };
 		1F5922D0290DCA3A008E4AA4 /* BoardViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardViewTests.swift; sourceTree = "<group>"; };
 		1F5922D2290DCD2C008E4AA4 /* BlockViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockViewTests.swift; sourceTree = "<group>"; };
+		1F5922D5290DCDC9008E4AA4 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		1F5EBF6C2909E6FD00A135F2 /* BoardCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCellView.swift; sourceTree = "<group>"; };
 		1F5EBF6E2909F67300A135F2 /* BlockViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -126,6 +128,7 @@
 		1F018D1829088EBE0039B56D /* GameOfBlocks */ = {
 			isa = PBXGroup;
 			children = (
+				1F5922D4290DCDB9008E4AA4 /* Protocols */,
 				1F018D4E29089A960039B56D /* Errors */,
 				1F5922BD290B3831008E4AA4 /* BusinessLogic */,
 				1F018D4329088EEA0039B56D /* View */,
@@ -213,6 +216,14 @@
 				1F5922BE290B3847008E4AA4 /* BoardGameBusinessLogic.swift */,
 			);
 			path = BusinessLogic;
+			sourceTree = "<group>";
+		};
+		1F5922D4290DCDB9008E4AA4 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				1F5922D5290DCDC9008E4AA4 /* Protocols.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -354,6 +365,7 @@
 				1F018D4929088F700039B56D /* BoardViewModel.swift in Sources */,
 				1F5922CD290C9407008E4AA4 /* ViewFactory.swift in Sources */,
 				1F018D4D290899A50039B56D /* BlockModel.swift in Sources */,
+				1F5922D6290DCDC9008E4AA4 /* Protocols.swift in Sources */,
 				1F5922BF290B3847008E4AA4 /* BoardGameBusinessLogic.swift in Sources */,
 				1F5EBF6F2909F67300A135F2 /* BlockViewModel.swift in Sources */,
 				1F018D5029089AA20039B56D /* Errors.swift in Sources */,
