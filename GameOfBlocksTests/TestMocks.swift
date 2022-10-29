@@ -9,7 +9,9 @@ import Foundation
 @testable import GameOfBlocks
 
 class MockBoardViewModel: BoardViewModelProtocol {
-    var currentBlocks: [BlockModel] = []
+    var currentBlocks: [BlockModel] = [
+        BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
+    ]
     var blocks: [[BlockModel?]] = [[]]
     var blockCount: Int = 0
     var currentStatus: BoardStatus = .ready
@@ -70,6 +72,14 @@ class MockBlockViewModel: BlockViewModelProtocol {
     }
 }
 
+class MockBoardCellViewModel: BoardCellViewModelProtocol {
+    var boardViewModel: (any BoardViewModelProtocol)?
+    var score: Int = 0
+    var currentStatus: BoardStatus = .unknown
+    
+    func updateStatus(requestedStatus: GameOfBlocks.BoardStatus?) { }
+}
+
 class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     
     func reset() {
@@ -97,5 +107,22 @@ class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
 extension MockBoardGameBusinessLogic: ScoreProtocol {
     var score: Int {
         mockScore
+    }
+}
+
+class MockViewFactory {
+    static func buildBoardView(rows: Int, columns: Int, maxBlocks: Int) -> BoardView<MockBoardViewModel> {
+        let viewModel = MockBoardViewModel()
+        return BoardView(viewModel: viewModel)
+    }
+    
+    static func buildBlockView(block: BlockModel, boardViewModel: (any BoardViewModelProtocol)?) -> BlockView<MockBlockViewModel> {
+        let viewModel = MockBlockViewModel()
+        return BlockView(viewModel: viewModel)
+    }
+    
+    static func buildCellView(position: BlockPosition, boardViewModel: (any BoardViewModelProtocol)?) -> BoardCellView<BoardCellViewModel> {
+        let viewModel = BoardCellViewModel(position: position, boardViewModel: boardViewModel)
+        return BoardCellView(viewModel: viewModel)
     }
 }
