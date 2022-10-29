@@ -89,6 +89,7 @@ final class BoardViewModelTests: XCTestCase {
         try viewModel.addBlock(position: BlockPosition(row: 1, column: 2))
         try viewModel.addBlock(position: BlockPosition(row: 1, column: 3))
         try viewModel.addBlock(position: BlockPosition(row: 1, column: 4))
+        viewModel.updateStatus(requestedStatus: nil)
         XCTAssertEqual(viewModel.currentStatus, .done)
     }
     

@@ -14,7 +14,7 @@ protocol ScoreProtocol {
 protocol BlockViewModelProtocol: ObservableObject, ScoreProtocol, StatusProtocol {
     var boardViewModel: (any BoardViewModelProtocol)? { get }
     var blockModel: BlockModel { get }
-    func moveBlock() throws
+    func moveBlock(animationDuration: Double, completion: @escaping() -> Void) throws
 }
 
 class BlockViewModel: BlockViewModelProtocol {
@@ -26,8 +26,13 @@ class BlockViewModel: BlockViewModelProtocol {
         self.boardViewModel = boardViewModel
     }
     
-    func moveBlock() throws {
+    @MainActor
+    func moveBlock(animationDuration: Double, completion: @escaping() -> Void) throws {
+        boardViewModel?.updateStatus(requestedStatus: .animating)
         try boardViewModel?.updateBlockPosition(block: blockModel)
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration, execute: {
+            completion()
+        })
     }
     
     var score: Int {
@@ -37,5 +42,9 @@ class BlockViewModel: BlockViewModelProtocol {
     
     var currentStatus: BoardStatus {
         boardViewModel?.currentStatus ?? .unknown
+    }
+    
+    func updateStatus(requestedStatus: BoardStatus?) {
+        boardViewModel?.updateStatus(requestedStatus: requestedStatus)
     }
 }

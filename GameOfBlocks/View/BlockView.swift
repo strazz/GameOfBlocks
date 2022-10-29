@@ -20,8 +20,10 @@ struct BlockView<ViewModel>: View where ViewModel: BlockViewModelProtocol {
             Rectangle()
                 .fill(Color.blue)
                 .onAppear {
-                    withAnimation {
-                        try? viewModel.moveBlock()
+                    withAnimation(.easeIn(duration: 0.3)) {
+                        try? viewModel.moveBlock(animationDuration: 0.3) {
+                            viewModel.updateStatus(requestedStatus: .ready)
+                        }
                     }
 
                 }

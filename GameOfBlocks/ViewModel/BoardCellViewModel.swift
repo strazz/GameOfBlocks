@@ -29,4 +29,8 @@ class BoardCellViewModel: BoardCellViewModelProtocol {
     var currentStatus: BoardStatus {
         boardViewModel?.currentStatus ?? .unknown
     }
+    
+    func updateStatus(requestedStatus: BoardStatus?) {
+        boardViewModel?.updateStatus(requestedStatus: requestedStatus)
+    }
 }

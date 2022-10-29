@@ -9,12 +9,14 @@ import Foundation
 
 enum BoardStatus {
     case ready
+    case animating
     case done
     case unknown
 }
 
 protocol StatusProtocol {
     var currentStatus: BoardStatus { get }
+    func updateStatus(requestedStatus: BoardStatus?)
 }
 
 protocol Resettable {
@@ -40,18 +42,20 @@ class BoardViewModel: BoardViewModelProtocol {
     let maxBlocks: Int
     let gameLogic: BoardGameBusinessLogicProtocol
     var blocks: [[BlockModel?]]
-    var blockCount: Int {
-        didSet {
-            if blockCount >= maxBlocks {
-                currentStatus = .done
-            } else {
-                currentStatus = .ready
-            }
-        }
-    }
-    private var currentScore: [[Int]]
+    var blockCount: Int
     @Published var currentStatus: BoardStatus
     @Published var currentBlocks: [BlockModel]
+    
+    func updateStatus(requestedStatus: BoardStatus?) {
+        if let requestedStatus = requestedStatus, requestedStatus == .animating {
+            currentStatus = requestedStatus
+        }
+        else if blockCount >= maxBlocks {
+            currentStatus = .done
+        } else {
+            currentStatus = .ready
+        }
+    }
     
     init(rows: Int, columns: Int, maxBlocks: Int, gameLogic: BoardGameBusinessLogicProtocol) {
         self.rows = rows
@@ -59,7 +63,6 @@ class BoardViewModel: BoardViewModelProtocol {
         self.gameLogic = gameLogic
         self.maxBlocks = min(rows * columns, maxBlocks)
         blocks = Array(repeating: Array(repeating: nil, count: columns), count: rows)
-        currentScore = Array(repeating: Array(repeating: 0, count: columns), count: rows)
         currentStatus = .ready
         currentBlocks = []
         blockCount = 0
@@ -106,29 +109,17 @@ class BoardViewModel: BoardViewModelProtocol {
     }
     
     func score(for position: BlockPosition) throws -> Int {
-        guard currentStatus == .done else {
-            return 0
-        }
-        let result = gameLogic.calculateScore(for: position, blockMatrix: blocks)
-        currentScore[position.row][position.column] = result
-        return result
+        gameLogic.calculateScore(for: position, blockMatrix: blocks)
     }
     
     func reset() {
         blocks = Array(repeating: Array(repeating: nil, count: columns), count: rows)
-        currentScore = Array(repeating: Array(repeating: 0, count: columns), count: rows)
         currentStatus = .ready
         currentBlocks = []
         blockCount = 0
     }
     
     var score: Int {
-        guard currentStatus == .done else {
-            return 0
-        }
-        print(currentScore)
-        let result = currentScore.flatMap({ $0 }).reduce(0, +)
-        return result
-        
+        0
     }
 }

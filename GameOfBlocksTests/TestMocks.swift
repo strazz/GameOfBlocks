@@ -38,6 +38,12 @@ class MockBoardViewModel: BoardViewModelProtocol {
     func reset() {
         isUpdateBlockPositionCalled = false
     }
+    
+    func updateStatus(requestedStatus: BoardStatus?) {
+        if let requestedStatus = requestedStatus {
+            currentStatus = requestedStatus
+        }
+    }
 }
 
 class MockBlockViewModel: BlockViewModelProtocol {
@@ -45,12 +51,22 @@ class MockBlockViewModel: BlockViewModelProtocol {
     var id: Int = 0
     var boardViewModel: (any BoardViewModelProtocol)?
     var blockModel: BlockModel = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
-    func moveBlock() throws {
+    
+    func moveBlock(animationDuration: Double, completion: @escaping () -> Void) throws {
         try boardViewModel?.updateBlockPosition(block: blockModel)
+        DispatchQueue.main.async {
+            completion()
+        }
     }
     
     var score: Int {
         0
+    }
+    
+    func updateStatus(requestedStatus: BoardStatus?) {
+        if let requestedStatus {
+            currentStatus = requestedStatus
+        }
     }
 }
 

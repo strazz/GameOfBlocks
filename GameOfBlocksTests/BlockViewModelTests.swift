@@ -23,9 +23,18 @@ final class BlockViewModelTests: XCTestCase {
         viewModel = nil
     }
 
-    func testMove() throws {
-        try viewModel.moveBlock()
+    @MainActor func testMove() throws {
+        let previousStatus = viewModel.currentStatus
+        let expectation = expectation(description: "move")
+        try viewModel.moveBlock(animationDuration: 0.5, completion: { [weak self] in
+            guard let self = self else { return }
+            self.viewModel.updateStatus(requestedStatus: previousStatus)
+            expectation.fulfill()
+        })
+        XCTAssertEqual(viewModel.currentStatus, .animating)
+        wait(for: [expectation], timeout: 0.5)
         XCTAssertTrue(mockBoardViewModel.isUpdateBlockPositionCalled)
+        XCTAssertEqual(viewModel.currentStatus, previousStatus)
     }
 
     func testScore() {
