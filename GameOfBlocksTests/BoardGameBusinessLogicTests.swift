@@ -14,7 +14,7 @@ final class BoardGameBusinessLogicTests: XCTestCase {
     private var blockMatrix: [[BlockModel?]]!
 
     override func setUpWithError() throws {
-        businessLogic = BoardGameBusinessLogic()
+        businessLogic = BoardGameBusinessLogic(rows: 5, columns: 5)
         blockMatrix = Array(repeating: Array(repeating: nil, count: 5), count: 5)
     }
 
@@ -147,6 +147,13 @@ final class BoardGameBusinessLogicTests: XCTestCase {
         blockMatrix[4][2] = block42
         let block21 = BlockModel(id: 4, position: BlockPosition(row: 2, column: 1), points: 0)
         blockMatrix[2][1] = block21
+        var result = 0
+        for row in 0..<blockMatrix.count {
+            for column in 0..<blockMatrix[row].count {
+                result += businessLogic.calculateScore(for: BlockPosition(row: row, column: column), blockMatrix: blockMatrix)
+            }
+        }
+        XCTAssertEqual(result, businessLogic.score)
         XCTAssertEqual(businessLogic.score, 85)
     }
 }

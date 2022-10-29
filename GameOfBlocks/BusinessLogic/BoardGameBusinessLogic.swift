@@ -14,13 +14,22 @@ enum StopPosition {
     case none
 }
 
-protocol BoardGameBusinessLogicProtocol: ScoreProtocol {
+protocol BoardGameBusinessLogicProtocol: ScoreProtocol, Resettable {
     func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition
     func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int
 }
 
 class BoardGameBusinessLogic {
     private let blockPoints: Int = 5
+    private let rows: Int
+    private let columns: Int
+    private var scores: [[Int]]
+    
+    init(rows: Int, columns: Int) {
+        self.rows = rows
+        self.columns = columns
+        scores = Array(repeating: Array(repeating: 0, count: columns), count: rows)
+    }
 }
 
 extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
@@ -69,7 +78,8 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
         if blockMatrix[position.row][position.column] == nil {
             if isUnderBridge(position: position, blockMatrix: blockMatrix) {
-                return 2 * blockPoints
+                scores[position.row][position.column] = 2 * blockPoints
+                return scores[position.row][position.column]
             }
             return 0
         }
@@ -78,6 +88,7 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
         if row < blockMatrix.count && blockMatrix[row][position.column] != nil {
             result += calculateScore(for: BlockPosition(row: row, column: position.column), blockMatrix: blockMatrix)
         }
+        scores[position.row][position.column] = result
         return result
     }
     
@@ -94,10 +105,14 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
         }
         return result
     }
+    
+    func reset() {
+        scores = Array(repeating: Array(repeating: 0, count: columns), count: rows)
+    }
 }
 
 extension BoardGameBusinessLogic: ScoreProtocol {
     var score: Int {
-        0
+        scores.flatMap({ $0 }).reduce(0, +)
     }
 }

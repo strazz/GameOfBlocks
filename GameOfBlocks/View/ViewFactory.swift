@@ -10,7 +10,7 @@ import Foundation
 class ViewFactory {
     
     static func buildBoardView(rows: Int, columns: Int, maxBlocks: Int) -> BoardView<BoardViewModel> {
-        let gameLogic = BoardGameBusinessLogic()
+        let gameLogic = BoardGameBusinessLogic(rows: rows, columns: columns)
         let viewModel = BoardViewModel(rows: rows, columns: columns, maxBlocks: maxBlocks, gameLogic: gameLogic)
         return BoardView(viewModel: viewModel)
     }
