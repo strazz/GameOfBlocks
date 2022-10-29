@@ -14,17 +14,33 @@ enum StopPosition {
     case none
 }
 
-protocol BoardGameBusinessLogicProtocol {
+enum ScoreStatus {
+    case ready
+    case unknown
+}
+
+protocol BoardGameBusinessLogicProtocol: Resettable {
     func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition
-    func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int
-    func calculateTotalScore(blockMatrix: [[BlockModel?]]) -> Int
+    func getScore(for position: BlockPosition) throws -> Int
+    @discardableResult func calculateTotalScore(blockMatrix: [[BlockModel?]]) -> Int
 }
 
 class BoardGameBusinessLogic {
     private let blockPoints: Int = 5
+    let rows: Int
+    let columns: Int
+    private var scores: [[Int]]
+    private var scoreStatus: ScoreStatus
+    
+    init(rows: Int, columns: Int) {
+        self.rows = rows
+        self.columns = columns
+        scores = Array(repeating: Array(repeating: 0, count: columns), count: rows)
+        scoreStatus = .unknown
+    }
 }
 
-extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
+extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol, SafeIndexesProtocol {
     
     func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition {
         let stopPosition = isFinalPosition(position: position, blockMatrix: blockMatrix)
@@ -67,7 +83,15 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
         }
     }
     
-    func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
+    func getScore(for position: BlockPosition) throws -> Int {
+        guard scoreStatus == .ready else {
+            throw ApplicationError.scoreNotReady
+        }
+        try checkIndexes(row: position.row, column: position.column)
+        return scores[position.row][position.column]
+    }
+    
+    private func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
         if blockMatrix[position.row][position.column] == nil {
             if isUnderBridge(position: position, blockMatrix: blockMatrix) {
                 return 2 * blockPoints
@@ -96,12 +120,23 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
         return result
     }
     
-    func calculateTotalScore(blockMatrix: [[BlockModel?]]) -> Int {
-        blockMatrix.enumerated().reduce(0) { partialResult, rowIterator in
+    @discardableResult func calculateTotalScore(blockMatrix: [[BlockModel?]]) -> Int {
+        scoreStatus = .ready
+        return blockMatrix.enumerated().reduce(0) { [weak self] partialResult, rowIterator in
             rowIterator.element.enumerated().reduce(partialResult) { partialResult, columnIterator in
+                guard let self = self else { return -1 }
                 let position = BlockPosition(row: rowIterator.offset, column: columnIterator.offset)
-                return partialResult + self.calculateScore(for: position, blockMatrix: blockMatrix)
+                let positionScore = self.calculateScore(for: position, blockMatrix: blockMatrix)
+                self.scores[position.row][position.column] = positionScore
+                return partialResult + positionScore
             }
         }
+    }
+}
+
+extension BoardGameBusinessLogic: Resettable {
+    func reset() {
+        scores = Array(repeating: Array(repeating: 0, count: columns), count: rows)
+        scoreStatus = .unknown
     }
 }

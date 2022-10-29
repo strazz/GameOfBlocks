@@ -30,5 +30,12 @@ enum InvalidArgumentError: LocalizedError, Equatable {
             
         }
     }
+}
+
+enum ApplicationError: LocalizedError, Equatable {
+    case scoreNotReady
     
+    var errorDescription: String? {
+        "Total Score not calculated"
+    }
 }

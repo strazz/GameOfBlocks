@@ -14,7 +14,7 @@ final class BoardGameBusinessLogicTests: XCTestCase {
     private var blockMatrix: [[BlockModel?]]!
 
     override func setUpWithError() throws {
-        businessLogic = BoardGameBusinessLogic()
+        businessLogic = BoardGameBusinessLogic(rows: 5, columns: 5)
         blockMatrix = Array(repeating: Array(repeating: nil, count: 5), count: 5)
     }
 
@@ -71,7 +71,8 @@ final class BoardGameBusinessLogicTests: XCTestCase {
     func testPointsForSingleBlock() throws {
         let block = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0))
         blockMatrix[0][0] = block
-        let result = businessLogic.calculateScore(for: BlockPosition(row: 0, column: 0), blockMatrix: blockMatrix)
+        businessLogic.calculateTotalScore(blockMatrix: blockMatrix)
+        let result = try businessLogic.getScore(for: BlockPosition(row: 0, column: 0))
         XCTAssertEqual(result, 5)
     }
     
@@ -82,16 +83,18 @@ final class BoardGameBusinessLogicTests: XCTestCase {
         blockMatrix[1][0] = block2
         let block3 = BlockModel(id: 0, position: BlockPosition(row: 2, column: 0))
         blockMatrix[2][0] = block3
-        let result_00 = businessLogic.calculateScore(for: BlockPosition(row:0 , column: 0), blockMatrix: blockMatrix)
+        businessLogic.calculateTotalScore(blockMatrix: blockMatrix)
+        let result_00 = try businessLogic.getScore(for: BlockPosition(row:0 , column: 0))
         XCTAssertEqual(result_00, 15)
-        let result_10 = businessLogic.calculateScore(for: BlockPosition(row:1 , column: 0), blockMatrix: blockMatrix)
+        let result_10 = try businessLogic.getScore(for: BlockPosition(row:1 , column: 0))
         XCTAssertEqual(result_10, 10)
-        let result_20 = businessLogic.calculateScore(for: BlockPosition(row:2 , column: 0), blockMatrix: blockMatrix)
+        let result_20 = try businessLogic.getScore(for: BlockPosition(row:2 , column: 0))
         XCTAssertEqual(result_20, 5)
     }
     
     func testPointsForEmptyCell() throws {
-        let result = businessLogic.calculateScore(for: BlockPosition(row: 0, column: 0), blockMatrix: blockMatrix)
+        businessLogic.calculateTotalScore(blockMatrix: blockMatrix)
+        let result = try businessLogic.getScore(for: BlockPosition(row: 0, column: 0))
         XCTAssertEqual(result, 0)
     }
     
@@ -106,7 +109,8 @@ final class BoardGameBusinessLogicTests: XCTestCase {
         blockMatrix[4][2] = block4
         let block5 = BlockModel(id: 4, position: BlockPosition(row: 3, column: 1))
         blockMatrix[3][1] = block5
-        let result = businessLogic.calculateScore(for: BlockPosition(row: 4, column: 1), blockMatrix: blockMatrix)
+        businessLogic.calculateTotalScore(blockMatrix: blockMatrix)
+        let result = try businessLogic.getScore(for: BlockPosition(row: 4, column: 1))
         XCTAssertEqual(result, 10)
     }
     
@@ -126,9 +130,10 @@ final class BoardGameBusinessLogicTests: XCTestCase {
         blockMatrix[4][2] = block42
         let block21 = BlockModel(id: 4, position: BlockPosition(row: 2, column: 1))
         blockMatrix[2][1] = block21
-        let result41 = businessLogic.calculateScore(for: BlockPosition(row: 4, column: 1), blockMatrix: blockMatrix)
+        businessLogic.calculateTotalScore(blockMatrix: blockMatrix)
+        let result41 = try businessLogic.getScore(for: BlockPosition(row: 4, column: 1))
         XCTAssertEqual(result41, 10)
-        let result31 = businessLogic.calculateScore(for: BlockPosition(row: 3, column: 1), blockMatrix: blockMatrix)
+        let result31 = try businessLogic.getScore(for: BlockPosition(row: 3, column: 1))
         XCTAssertEqual(result31, 10)
     }
     

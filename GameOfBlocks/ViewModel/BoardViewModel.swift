@@ -19,7 +19,7 @@ protocol BoardViewModelProtocol: ObservableObject, StatusProtocol, ScoreProtocol
     func score(for position: BlockPosition) throws -> Int
 }
 
-class BoardViewModel: BoardViewModelProtocol {
+class BoardViewModel: BoardViewModelProtocol, SafeIndexesProtocol {
     
     let rows: Int
     let columns: Int
@@ -50,15 +50,6 @@ class BoardViewModel: BoardViewModelProtocol {
         currentStatus = .ready
         currentBlocks = []
         blockCount = 0
-    }
-    
-    private func checkIndexes(row: Int, column: Int) throws {
-        guard column >= 0, column < blocks[0].count else {
-            throw InvalidArgumentError.columnOutOfBounds(column: column)
-        }
-        guard row >= 0, row < blocks.count else {
-            throw InvalidArgumentError.rowOutOfBounds(row: row)
-        }
     }
     
     func addBlock(position: BlockPosition) throws {
@@ -93,7 +84,7 @@ class BoardViewModel: BoardViewModelProtocol {
     }
     
     func score(for position: BlockPosition) throws -> Int {
-        gameLogic.calculateScore(for: position, blockMatrix: blocks)
+        try gameLogic.getScore(for: position)
     }
     
     func reset() {

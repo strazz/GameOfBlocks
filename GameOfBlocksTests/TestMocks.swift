@@ -94,7 +94,7 @@ class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     }
     
     var mockBlockScore: Int = 5
-    func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
+    func getScore(for position: BlockPosition) -> Int {
         mockBlockScore
     }
     
