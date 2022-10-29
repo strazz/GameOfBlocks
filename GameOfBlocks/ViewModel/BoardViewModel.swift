@@ -54,16 +54,16 @@ class BoardViewModel: BoardViewModelProtocol, SafeIndexesProtocol {
     
     func addBlock(position: BlockPosition) throws {
         guard blockCount < maxBlocks else {
-            throw InvalidArgumentError.maxBlocksReached(maxBlocks: maxBlocks)
+            throw ApplicationError.maxBlocksReached(maxBlocks: maxBlocks)
         }
         guard currentStatus == .ready else {
-            throw InvalidArgumentError.invalidStatus(status: currentStatus)
+            throw ApplicationError.invalidStatus(status: currentStatus)
         }
         let column = position.column
         let row = position.row
         try checkIndexes(row: row, column: column)
         guard blocks[row][column] == nil else {
-            throw InvalidArgumentError.cellIsFull(position: position)
+            throw ApplicationError.cellIsFull(position: position)
         }
         let block = BlockModel(id: blockCount + 1, position: position)
         blocks[row][column] = block

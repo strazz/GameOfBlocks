@@ -70,8 +70,8 @@ final class BoardViewModelTests: XCTestCase {
         try viewModel.addBlock(position: BlockPosition(row: 1, column: 3))
         try viewModel.addBlock(position: BlockPosition(row: 1, column: 4))
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 2, column: 0))) { error in
-            XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.maxBlocksReached(maxBlocks: 10))
-            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.maxBlocksReached(maxBlocks: 10).localizedDescription)
+            XCTAssertEqual(error as! ApplicationError, ApplicationError.maxBlocksReached(maxBlocks: 10))
+            XCTAssertEqual(error.localizedDescription, ApplicationError.maxBlocksReached(maxBlocks: 10).localizedDescription)
         }
         let result = viewModel.blocks
         XCTAssertEqual(result.flatMap({ $0 }).compactMap({ $0 }).count, viewModel.maxBlocks)
@@ -105,8 +105,8 @@ final class BoardViewModelTests: XCTestCase {
     func testInvalidStatusAddBlock() throws {
         viewModel.currentStatus = .done
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))) { error in
-            XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.invalidStatus(status: .done))
-            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.invalidStatus(status: .done).localizedDescription)
+            XCTAssertEqual(error as! ApplicationError, ApplicationError.invalidStatus(status: .done))
+            XCTAssertEqual(error.localizedDescription, ApplicationError.invalidStatus(status: .done).localizedDescription)
         }
     }
     
@@ -114,8 +114,8 @@ final class BoardViewModelTests: XCTestCase {
     func testAddSameBlocks() throws {
         try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))
         XCTAssertThrowsError(try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))) { error in
-            XCTAssertEqual(error as! InvalidArgumentError, InvalidArgumentError.cellIsFull(position: BlockPosition(row: 0, column: 0)))
-            XCTAssertEqual(error.localizedDescription, InvalidArgumentError.cellIsFull(position: BlockPosition(row: 0, column: 0)).localizedDescription)
+            XCTAssertEqual(error as! ApplicationError, ApplicationError.cellIsFull(position: BlockPosition(row: 0, column: 0)))
+            XCTAssertEqual(error.localizedDescription, ApplicationError.cellIsFull(position: BlockPosition(row: 0, column: 0)).localizedDescription)
         }
         let result = viewModel.blocks
         XCTAssertEqual(viewModel.blockCount, 1)

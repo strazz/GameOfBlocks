@@ -18,7 +18,8 @@ struct BlockView<ViewModel>: View where ViewModel: BlockViewModelProtocol {
     var body: some View {
         ZStack {
             Rectangle()
-                .fill(Color.blue)
+                .fill(.blue)
+                .border(.black)
                 .onAppear {
                     withAnimation(.easeIn(duration: 0.3)) {
                         try? viewModel.moveBlock(animationDuration: 0.3) {

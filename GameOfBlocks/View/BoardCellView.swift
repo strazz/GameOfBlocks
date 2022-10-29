@@ -14,7 +14,8 @@ struct BoardCellView<ViewModel>: View where ViewModel: BoardCellViewModelProtoco
     var body: some View {
         ZStack {
             Rectangle()
-                .fill(Color.white)
+                .fill(.white)
+                .border(.black)
             if viewModel.currentStatus == .done && viewModel.score > 0 {
                 Text("\(viewModel.score)")
             }
