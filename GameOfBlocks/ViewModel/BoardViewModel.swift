@@ -120,6 +120,6 @@ class BoardViewModel: BoardViewModelProtocol {
     }
     
     var score: Int {
-        0
+        gameLogic.score
     }
 }

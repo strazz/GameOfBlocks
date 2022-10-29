@@ -170,22 +170,6 @@ final class BoardViewModelTests: XCTestCase {
     }
     
     func testScore() throws {
-        try viewModel.addBlock(position: BlockPosition(row: 4, column: 0))
-        try viewModel.addBlock(position: BlockPosition(row: 3, column: 0))
-        try viewModel.addBlock(position: BlockPosition(row: 2, column: 0))
-        try viewModel.addBlock(position: BlockPosition(row: 4, column: 2))
-        try viewModel.addBlock(position: BlockPosition(row: 3, column: 2))
-        try viewModel.addBlock(position: BlockPosition(row: 2, column: 2))
-        try viewModel.addBlock(position: BlockPosition(row: 2, column: 1))
-        viewModel.currentStatus = .done
-        var result = 0
-        result += try viewModel.score(for: BlockPosition(row: 4, column: 0))
-        result += try viewModel.score(for: BlockPosition(row: 3, column: 0))
-        result += try viewModel.score(for: BlockPosition(row: 2, column: 0))
-        result += try viewModel.score(for: BlockPosition(row: 4, column: 2))
-        result += try viewModel.score(for: BlockPosition(row: 3, column: 2))
-        result += try viewModel.score(for: BlockPosition(row: 2, column: 2))
-        result += try viewModel.score(for: BlockPosition(row: 2, column: 1))
-        XCTAssertEqual(result, businessLogic.mockBlockScore * 7)
+        XCTAssertEqual(viewModel.score, businessLogic.score)
     }
 }

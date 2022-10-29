@@ -81,4 +81,12 @@ class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
         mockBlockScore
     }
+    
+    var mockScore: Int = 42
+}
+
+extension MockBoardGameBusinessLogic: ScoreProtocol {
+    var score: Int {
+        mockScore
+    }
 }

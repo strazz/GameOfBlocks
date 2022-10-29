@@ -131,4 +131,22 @@ final class BoardGameBusinessLogicTests: XCTestCase {
         let result31 = businessLogic.calculateScore(for: BlockPosition(row: 3, column: 1), blockMatrix: blockMatrix)
         XCTAssertEqual(result31, 10)
     }
+    
+    func testScore() throws {
+        let block20 = BlockModel(id: 0, position: BlockPosition(row: 2, column: 0), points: 0)
+        blockMatrix[2][0] = block20
+        let block30 = BlockModel(id: 1, position: BlockPosition(row: 3, column: 0), points: 0)
+        blockMatrix[3][0] = block30
+        let block40 = BlockModel(id: 1, position: BlockPosition(row: 4, column: 0), points: 0)
+        blockMatrix[4][0] = block40
+        let block22 = BlockModel(id: 2, position: BlockPosition(row: 2, column: 2), points: 0)
+        blockMatrix[2][2] = block22
+        let block32 = BlockModel(id: 2, position: BlockPosition(row: 3, column: 2), points: 0)
+        blockMatrix[3][2] = block32
+        let block42 = BlockModel(id: 3, position: BlockPosition(row: 4, column: 2), points: 0)
+        blockMatrix[4][2] = block42
+        let block21 = BlockModel(id: 4, position: BlockPosition(row: 2, column: 1), points: 0)
+        blockMatrix[2][1] = block21
+        XCTAssertEqual(businessLogic.score, 85)
+    }
 }

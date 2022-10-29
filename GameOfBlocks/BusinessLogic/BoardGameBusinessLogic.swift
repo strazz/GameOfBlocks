@@ -14,7 +14,7 @@ enum StopPosition {
     case none
 }
 
-protocol BoardGameBusinessLogicProtocol {
+protocol BoardGameBusinessLogicProtocol: ScoreProtocol {
     func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition
     func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int
 }
@@ -93,5 +93,11 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
             result = isUnderBridge(position: BlockPosition(row: row, column: position.column), blockMatrix: blockMatrix)
         }
         return result
+    }
+}
+
+extension BoardGameBusinessLogic: ScoreProtocol {
+    var score: Int {
+        0
     }
 }
