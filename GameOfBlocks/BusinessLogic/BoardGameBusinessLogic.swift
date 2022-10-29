@@ -16,7 +16,7 @@ enum StopPosition {
 
 enum ScoreStatus {
     case ready
-    case unknown
+    case notReady
 }
 
 protocol BoardGameBusinessLogicProtocol: Resettable {
@@ -29,14 +29,14 @@ class BoardGameBusinessLogic {
     private let blockPoints: Int = 5
     let rows: Int
     let columns: Int
-    private var scores: [[Int]]
-    private var scoreStatus: ScoreStatus
+    internal var scores: [[Int]]
+    internal var scoreStatus: ScoreStatus
     
     init(rows: Int, columns: Int) {
         self.rows = rows
         self.columns = columns
         scores = Array(repeating: Array(repeating: 0, count: columns), count: rows)
-        scoreStatus = .unknown
+        scoreStatus = .notReady
     }
 }
 
@@ -137,6 +137,6 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol, SafeIndexesPro
 extension BoardGameBusinessLogic: Resettable {
     func reset() {
         scores = Array(repeating: Array(repeating: 0, count: columns), count: rows)
-        scoreStatus = .unknown
+        scoreStatus = .notReady
     }
 }

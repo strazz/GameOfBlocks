@@ -155,4 +155,21 @@ final class BoardGameBusinessLogicTests: XCTestCase {
         let result = businessLogic.calculateTotalScore(blockMatrix: blockMatrix)
         XCTAssertEqual(result, 85)
     }
+    
+    func testScoreNotReadyError() throws {
+        XCTAssertThrowsError(try businessLogic.getScore(for: BlockPosition(row: 0, column: 0))) { error in
+            XCTAssertEqual(error as! ApplicationError, ApplicationError.scoreNotReady)
+            XCTAssertEqual(error.localizedDescription, ApplicationError.scoreNotReady.localizedDescription)
+        }
+    }
+    
+    func testReset() {
+        let block21 = BlockModel(id: 4, position: BlockPosition(row: 2, column: 1))
+        blockMatrix[2][1] = block21
+        businessLogic.calculateTotalScore(blockMatrix: blockMatrix)
+        XCTAssert(businessLogic.scores[2][1] != 0)
+        businessLogic.reset()
+        XCTAssert(businessLogic.scores[2][1] == 0)
+        XCTAssertEqual(businessLogic.scoreStatus, .notReady)
+    }
 }
