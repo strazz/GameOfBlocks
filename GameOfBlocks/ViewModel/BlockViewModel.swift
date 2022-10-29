@@ -26,7 +26,6 @@ class BlockViewModel: BlockViewModelProtocol {
         self.boardViewModel = boardViewModel
     }
     
-    @MainActor
     func moveBlock(animationDuration: Double, completion: @escaping() -> Void) throws {
         boardViewModel?.updateStatus(requestedStatus: .animating)
         try boardViewModel?.updateBlockPosition(block: blockModel)
