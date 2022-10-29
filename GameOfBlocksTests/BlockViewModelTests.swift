@@ -23,9 +23,13 @@ final class BlockViewModelTests: XCTestCase {
         viewModel = nil
     }
 
-    func testExample() throws {
+    func testMove() throws {
         try viewModel.moveBlock()
         XCTAssertTrue(mockBoardViewModel.isUpdateBlockPositionCalled)
     }
 
+    func testScore() {
+        let result = viewModel.score
+        XCTAssertEqual(result, mockBoardViewModel.score(for: BlockPosition(row: 0, column: 0)))
+    }
 }

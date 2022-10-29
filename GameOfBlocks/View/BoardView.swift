@@ -16,6 +16,20 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
     }
     
     var body: some View {
+        VStack {
+            drawBoard()
+            HStack {
+                if viewModel.currentStatus == .done {
+                    Text("Score: \(viewModel.score)")
+                }
+                Button("Reset") {
+                    viewModel.reset()
+                }
+            }
+        }
+    }
+    
+    func drawBoard() -> some View {
         GeometryReader { (geometry: GeometryProxy) in
             let columns = viewModel.columns
             let rows = viewModel.rows
@@ -27,11 +41,13 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
                 ForEach(0 ..< viewModel.rows, id: \.self) { row in
                     GridRow {
                         ForEach(0 ..< viewModel.columns, id: \.self) { column in
-                            BoardCellView()
+                            ViewFactory.buildCellView(
+                                position: BlockPosition(row: row, column: column),
+                                boardViewModel: viewModel)
                                 .frame(width: squareSize, height: squareSize)
                                 .onTapGesture {
                                     do {
-                                        try self.viewModel.addBlock(position: BlockPosition(row: row, column: column))
+                                        try viewModel.addBlock(position: BlockPosition(row: row, column: column))
                                     }
                                     catch let error {
                                         print(error.localizedDescription)
@@ -51,7 +67,6 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
         }
     }
     
-    
     func drawBlocks(size: CGFloat, origin: CGPoint) -> some View {
         ForEach(viewModel.currentBlocks) { (blockModel: BlockModel) in
             let row: CGFloat = CGFloat(blockModel.position.row)
@@ -60,8 +75,7 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
             let viewPosition = CGPoint(
                 x: (column * size) + origin.x + size * 0.5,
                 y: (row * size) + origin.y + size * 0.5)
-            let viewModel = BlockViewModel(blockModel: blockModel, boardViewModel: self.viewModel)
-            BlockView(viewModel: viewModel)
+            ViewFactory.buildBlockView(block: blockModel, boardViewModel: self.viewModel)
                 .frame(width: size, height: size)
                 .position(viewPosition)
         }
@@ -71,7 +85,6 @@ struct BoardView<ViewModel>: View where ViewModel: BoardViewModelProtocol {
 
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = BoardViewModel(rows: 5, columns: 5, maxBlocks: 10, gameLogic: BoardGameBusinessLogic())
-        BoardView(viewModel: viewModel)
+        ViewFactory.buildBoardView(rows: 5, columns: 5, maxBlocks: 10)
     }
 }

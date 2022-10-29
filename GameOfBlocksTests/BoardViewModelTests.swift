@@ -78,6 +78,28 @@ final class BoardViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.blockCount, viewModel.maxBlocks)
     }
     
+    func testSwitchStatusToDone() throws {
+        try viewModel.addBlock(position: BlockPosition(row: 0, column: 0))
+        try viewModel.addBlock(position: BlockPosition(row: 0, column: 1))
+        try viewModel.addBlock(position: BlockPosition(row: 0, column: 2))
+        try viewModel.addBlock(position: BlockPosition(row: 0, column: 3))
+        try viewModel.addBlock(position: BlockPosition(row: 0, column: 4))
+        try viewModel.addBlock(position: BlockPosition(row: 1, column: 0))
+        try viewModel.addBlock(position: BlockPosition(row: 1, column: 1))
+        try viewModel.addBlock(position: BlockPosition(row: 1, column: 2))
+        try viewModel.addBlock(position: BlockPosition(row: 1, column: 3))
+        try viewModel.addBlock(position: BlockPosition(row: 1, column: 4))
+        XCTAssertEqual(viewModel.currentStatus, .done)
+    }
+    
+    func testReset() throws {
+        try testSwitchStatusToDone()
+        viewModel.reset()
+        XCTAssertEqual(viewModel.currentStatus, .ready)
+        XCTAssertEqual(viewModel.blockCount, 0)
+        XCTAssert(viewModel.currentBlocks.isEmpty)
+    }
+    
     // tests that we cannot add a block if status is not ready
     func testInvalidStatusAddBlock() throws {
         viewModel.currentStatus = .done
@@ -138,5 +160,31 @@ final class BoardViewModelTests: XCTestCase {
         let result = try viewModel.updateBlockPosition(block: block)
         XCTAssertEqual(result, businessLogic.mockPosition)
         XCTAssertEqual(viewModel.blocks[4][0]?.position, result)
+    }
+    
+    func testScoreForBlock() throws {
+        viewModel.currentStatus = .done
+        let result = try viewModel.score(for: BlockPosition(row: 0, column: 0))
+        XCTAssertEqual(result, businessLogic.mockBlockScore)
+    }
+    
+    func testScore() throws {
+        try viewModel.addBlock(position: BlockPosition(row: 4, column: 0))
+        try viewModel.addBlock(position: BlockPosition(row: 3, column: 0))
+        try viewModel.addBlock(position: BlockPosition(row: 2, column: 0))
+        try viewModel.addBlock(position: BlockPosition(row: 4, column: 2))
+        try viewModel.addBlock(position: BlockPosition(row: 3, column: 2))
+        try viewModel.addBlock(position: BlockPosition(row: 2, column: 2))
+        try viewModel.addBlock(position: BlockPosition(row: 2, column: 1))
+        viewModel.currentStatus = .done
+        var result = 0
+        result += try viewModel.score(for: BlockPosition(row: 4, column: 0))
+        result += try viewModel.score(for: BlockPosition(row: 3, column: 0))
+        result += try viewModel.score(for: BlockPosition(row: 2, column: 0))
+        result += try viewModel.score(for: BlockPosition(row: 4, column: 2))
+        result += try viewModel.score(for: BlockPosition(row: 3, column: 2))
+        result += try viewModel.score(for: BlockPosition(row: 2, column: 2))
+        result += try viewModel.score(for: BlockPosition(row: 2, column: 1))
+        XCTAssertEqual(result, businessLogic.mockBlockScore * 7)
     }
 }

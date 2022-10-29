@@ -24,25 +24,45 @@ class MockBoardViewModel: BoardViewModelProtocol {
         isUpdateBlockPositionCalled = true
         return BlockPosition(row: 0, column: 0)
     }
+    
+    var mockScoreForPosition = 5
+    func score(for position: GameOfBlocks.BlockPosition) -> Int {
+        mockScoreForPosition
+    }
+    
+    var mockTotalScore: Int = 0
+    var score: Int {
+        mockTotalScore
+    }
+    
+    func reset() {
+        isUpdateBlockPositionCalled = false
+    }
 }
 
 class MockBlockViewModel: BlockViewModelProtocol {
+    var currentStatus: BoardStatus = .ready
     var id: Int = 0
     var boardViewModel: (any BoardViewModelProtocol)?
     var blockModel: BlockModel = BlockModel(id: 0, position: BlockPosition(row: 0, column: 0), points: 0)
     func moveBlock() throws {
         try boardViewModel?.updateBlockPosition(block: blockModel)
     }
+    
+    var score: Int {
+        0
+    }
 }
 
 class MockBoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
+ 
     var mockPosition = BlockPosition(row: 0, column: 0)
     func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition {
         mockPosition
     }
     
-    var mockPoints: Int = 0
-    func calculatePoints(for position: GameOfBlocks.BlockPosition, blockMatrix: [[GameOfBlocks.BlockModel?]]) -> Int {
-        mockPoints
+    var mockBlockScore: Int = 5
+    func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
+        mockBlockScore
     }
 }

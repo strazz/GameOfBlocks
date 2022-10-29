@@ -10,10 +10,18 @@ import Foundation
 enum BoardStatus {
     case ready
     case done
+    case unknown
 }
 
-protocol BoardViewModelProtocol: ObservableObject {
+protocol StatusProtocol {
     var currentStatus: BoardStatus { get }
+}
+
+protocol Resettable {
+    func reset()
+}
+
+protocol BoardViewModelProtocol: ObservableObject, StatusProtocol, ScoreProtocol, Resettable {
     var rows: Int { get }
     var columns: Int { get }
     var maxBlocks: Int { get }
@@ -22,16 +30,26 @@ protocol BoardViewModelProtocol: ObservableObject {
     @discardableResult func updateBlockPosition(block: BlockModel) throws -> BlockPosition
     var blocks: [[BlockModel?]] { get }
     var blockCount: Int { get }
+    func score(for position: BlockPosition) throws -> Int
 }
 
-class BoardViewModel: ObservableObject, BoardViewModelProtocol {
+class BoardViewModel: BoardViewModelProtocol {
     
     let rows: Int
     let columns: Int
     let maxBlocks: Int
     let gameLogic: BoardGameBusinessLogicProtocol
     var blocks: [[BlockModel?]]
-    var blockCount: Int
+    var blockCount: Int {
+        didSet {
+            if blockCount >= maxBlocks {
+                currentStatus = .done
+            } else {
+                currentStatus = .ready
+            }
+        }
+    }
+    private var currentScore: [[Int]]
     @Published var currentStatus: BoardStatus
     @Published var currentBlocks: [BlockModel]
     
@@ -41,6 +59,7 @@ class BoardViewModel: ObservableObject, BoardViewModelProtocol {
         self.gameLogic = gameLogic
         self.maxBlocks = min(rows * columns, maxBlocks)
         blocks = Array(repeating: Array(repeating: nil, count: columns), count: rows)
+        currentScore = Array(repeating: Array(repeating: 0, count: columns), count: rows)
         currentStatus = .ready
         currentBlocks = []
         blockCount = 0
@@ -84,5 +103,32 @@ class BoardViewModel: ObservableObject, BoardViewModelProtocol {
         blocks[newPosition.row][newPosition.column] = newBlock
         currentBlocks = blocks.flatMap({ $0 }).compactMap({ $0 })
         return newPosition
+    }
+    
+    func score(for position: BlockPosition) throws -> Int {
+        guard currentStatus == .done else {
+            return 0
+        }
+        let result = gameLogic.calculateScore(for: position, blockMatrix: blocks)
+        currentScore[position.row][position.column] = result
+        return result
+    }
+    
+    func reset() {
+        blocks = Array(repeating: Array(repeating: nil, count: columns), count: rows)
+        currentScore = Array(repeating: Array(repeating: 0, count: columns), count: rows)
+        currentStatus = .ready
+        currentBlocks = []
+        blockCount = 0
+    }
+    
+    var score: Int {
+        guard currentStatus == .done else {
+            return 0
+        }
+        print(currentScore)
+        let result = currentScore.flatMap({ $0 }).reduce(0, +)
+        return result
+        
     }
 }

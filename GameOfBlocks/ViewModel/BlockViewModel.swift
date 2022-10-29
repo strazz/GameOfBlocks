@@ -7,7 +7,11 @@
 
 import Foundation
 
-protocol BlockViewModelProtocol: ObservableObject {
+protocol ScoreProtocol {
+    var score: Int { get }
+}
+
+protocol BlockViewModelProtocol: ObservableObject, ScoreProtocol, StatusProtocol {
     var boardViewModel: (any BoardViewModelProtocol)? { get }
     var blockModel: BlockModel { get }
     func moveBlock() throws
@@ -24,5 +28,14 @@ class BlockViewModel: BlockViewModelProtocol {
     
     func moveBlock() throws {
         try boardViewModel?.updateBlockPosition(block: blockModel)
+    }
+    
+    var score: Int {
+        let result = try? boardViewModel?.score(for: blockModel.position)
+        return result ?? 0
+    }
+    
+    var currentStatus: BoardStatus {
+        boardViewModel?.currentStatus ?? .unknown
     }
 }

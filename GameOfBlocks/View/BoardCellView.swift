@@ -7,15 +7,23 @@
 
 import SwiftUI
 
-struct BoardCellView: View {
+struct BoardCellView<ViewModel>: View where ViewModel: BoardCellViewModelProtocol {
+    
+    @ObservedObject var viewModel: ViewModel
+    
     var body: some View {
-        Rectangle()
-            .fill(.white)
+        ZStack {
+            Rectangle()
+                .fill(Color.white)
+            if viewModel.currentStatus == .done && viewModel.score > 0 {
+                Text("\(viewModel.score)")
+            }
+        }
     }
 }
 
 struct BoardCellView_Previews: PreviewProvider {
     static var previews: some View {
-        BoardCellView()
+        ViewFactory.buildCellView(position: BlockPosition(row: 0, column: 0), boardViewModel: nil)
     }
 }

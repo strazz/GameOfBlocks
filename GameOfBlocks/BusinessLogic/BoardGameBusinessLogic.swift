@@ -16,17 +16,17 @@ enum StopPosition {
 
 protocol BoardGameBusinessLogicProtocol {
     func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition
-    func calculatePoints(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int
+    func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int
 }
 
 class BoardGameBusinessLogic {
-    
+    private let blockPoints: Int = 5
 }
 
 extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
     
     func nextPosition(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> BlockPosition {
-        var stopPosition = isFinalPosition(position: position, blockMatrix: blockMatrix)
+        let stopPosition = isFinalPosition(position: position, blockMatrix: blockMatrix)
         if stopPosition == .none {
             let newPosition = BlockPosition(row: position.row + 1, column: position.column)
             return nextPosition(for: newPosition, blockMatrix: blockMatrix)
@@ -66,17 +66,17 @@ extension BoardGameBusinessLogic: BoardGameBusinessLogicProtocol {
         }
     }
     
-    func calculatePoints(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
+    func calculateScore(for position: BlockPosition, blockMatrix: [[BlockModel?]]) -> Int {
         if blockMatrix[position.row][position.column] == nil {
             if isUnderBridge(position: position, blockMatrix: blockMatrix) {
-                return 10
+                return 2 * blockPoints
             }
             return 0
         }
-        var result: Int = 5
+        var result: Int = blockPoints
         let row = position.row + 1
         if row < blockMatrix.count && blockMatrix[row][position.column] != nil {
-            result += calculatePoints(for: BlockPosition(row: row, column: position.column), blockMatrix: blockMatrix)
+            result += calculateScore(for: BlockPosition(row: row, column: position.column), blockMatrix: blockMatrix)
         }
         return result
     }
